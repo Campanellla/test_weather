@@ -1,6 +1,6 @@
 import { SET_SEARCH_CITY } from 'src/actions/types'
 
-type ListCities = {
+export type ListCities = {
   results: { [key: string]: { title: string }[] }
   isLoading: boolean
 }
@@ -20,7 +20,7 @@ const searchCity = (
 
   switch (action.type) {
     case SET_SEARCH_CITY:
-      state.results[city] = { ...action.results }
+      state.results[city] = [...action.results]
       state.isLoading = action.isLoading
       return { ...state }
 

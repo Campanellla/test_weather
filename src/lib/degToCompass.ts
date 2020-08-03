@@ -1,4 +1,4 @@
-function degToCompass(num: number) {
+const degToCompass = (num: number) => {
   var val = Math.floor(num / 22.5 + 0.5)
   var arr = [
     'N',

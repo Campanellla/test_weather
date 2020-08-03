@@ -18,7 +18,7 @@ export const getCitiesList = (city = '') => {
     return { type: 'drop' }
   }
 
-  return async function (dispatch) {
+  return async (dispatch) => {
     dispatch(setSearchCity(city, true))
 
     fetch(`/api/findcity?city=${city}`)

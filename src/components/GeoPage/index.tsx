@@ -20,13 +20,35 @@ const GeoPageContainer = styled.div`
 `
 
 const GeoPage = ({ weather, getLocationWeather }) => {
+  const [prompt, setPrompt] = React.useState(true)
+
   React.useEffect(() => {
-    getLocationWeather()
+    navigator?.permissions
+      ?.query({ name: 'geolocation' })
+      .then(function (result) {
+        if (result.state == 'granted') {
+          getLocationWeather()
+        } else if (result.state == 'prompt') {
+          setPrompt(true)
+        } else {
+        }
+      })
   }, [])
 
   if (!weather || weather.loading) {
     return (
       <GeoPageContainer>
+        {prompt ? (
+          <Button
+            onClick={() => {
+              setPrompt(false)
+              getLocationWeather()
+            }}
+          >
+            Set location
+          </Button>
+        ) : null}
+
         <WeatherSkeleton />
         <CityPageButton />
       </GeoPageContainer>

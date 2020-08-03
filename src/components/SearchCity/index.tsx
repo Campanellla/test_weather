@@ -6,6 +6,21 @@ import { getCitiesList } from 'src/actions/getCitiesList'
 import { Search, SearchProps } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 
+import styled from 'styled-components'
+
+import type { ListCities } from 'src/store/reducers/searchCity'
+
+const popularCities = ['London', 'Odesa', 'Kyiv']
+
+const StyledSearch = styled(Search)`
+  display: grid;
+  padding: 1rem;
+
+  &&& > .results {
+    position: initial;
+  }
+`
+
 type CityName = { title: string }
 
 type Props = {
@@ -30,7 +45,7 @@ class SearchCity extends Component<Props, State> {
     e: React.MouseEvent<HTMLElement, MouseEvent>,
     { result }: { result: CityName }
   ) => {
-    this.props.onSelect?.(result.title)
+    this.props.onSelect?.(result?.title)
 
     this.setState({ value: result.title })
   }
@@ -51,21 +66,33 @@ class SearchCity extends Component<Props, State> {
     const { value } = this.state
 
     return (
-      <Search
-        selectFirstResult
-        loading={this.props.isLoading}
-        onResultSelect={this.handleResultSelect}
-        onSearchChange={_.debounce(this.handleSearchChange, 500, {
-          leading: true,
-        })}
-        results={this.props.results[value]}
-        value={value}
-      />
+      <>
+        <StyledSearch
+          fluid
+          showNoResults={!this.props.isLoading}
+          selectFirstResult
+          loading={this.props.isLoading}
+          onResultSelect={this.handleResultSelect}
+          onSearchChange={_.debounce(this.handleSearchChange, 500, {
+            leading: true,
+          })}
+          results={this.props.results[value] || []}
+          value={value}
+        />
+        <div>
+          <div>Popular:</div>
+          {popularCities.map((city, key) => (
+            <div key={key} onClick={() => this.props.onSelect?.(city)}>
+              {city}
+            </div>
+          ))}
+        </div>
+      </>
     )
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: { searchCity: ListCities }) => {
   return {
     results: state.searchCity.results,
     isLoading: state.searchCity.isLoading,
