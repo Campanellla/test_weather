@@ -59,8 +59,17 @@ class SearchCity extends Component<Props, State> {
     }
 
     this.setState({ value })
-    this.props.getCitiesList(value)
+    //this.props.getCitiesList(value)
+    this._handleSC()
   }
+
+  _get = () => {
+    this.props.getCitiesList(this.state.value)
+  }
+
+  _handleSC = _.debounce(this._get, 500, {
+    leading: true,
+  })
 
   render() {
     const { value } = this.state
@@ -73,10 +82,8 @@ class SearchCity extends Component<Props, State> {
           selectFirstResult
           loading={this.props.isLoading}
           onResultSelect={this.handleResultSelect}
-          onSearchChange={_.debounce(this.handleSearchChange, 500, {
-            leading: true,
-          })}
-          results={this.props.results[value] || []}
+          onSearchChange={this.handleSearchChange}
+          results={this.props.results[value]}
           value={value}
         />
         <div>

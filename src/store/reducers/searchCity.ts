@@ -20,7 +20,8 @@ const searchCity = (
 
   switch (action.type) {
     case SET_SEARCH_CITY:
-      state.results[city] = [...action.results]
+      state.results[city] = action.results
+      state.results = { ...state.results }
       state.isLoading = action.isLoading
       return { ...state }
 
