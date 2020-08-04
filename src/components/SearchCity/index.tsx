@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { Search, SearchProps, Button } from 'semantic-ui-react'
 import _ from 'lodash'
 
-import type { ListCities } from 'src/store/reducers/searchCity'
 import { getCitiesList } from 'src/actions/getCitiesList'
 
 const popularCities = [
@@ -124,7 +123,7 @@ const SearchContainer = styled.div`
   grid-area: Search;
 `
 
-const mapStateToProps = (state: { searchCity: ListCities }) => {
+const mapStateToProps = (state: ReduxState) => {
   return {
     results: state.searchCity.results,
     isLoading: state.searchCity.isLoading,

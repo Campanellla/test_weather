@@ -1,10 +1,11 @@
 import 'semantic-ui-css/semantic.min.css'
 import React from 'react'
-
 import { Provider } from 'react-redux'
+import { createGlobalStyle } from 'styled-components'
+
 import store from 'src/store'
 
-import { createGlobalStyle } from 'styled-components'
+import { NextComponentType } from 'next'
 
 const GlobalStyles = createGlobalStyle`
   body{
@@ -18,7 +19,15 @@ const GlobalStyles = createGlobalStyle`
   }
 `
 
-function MyApp({ Component, pageProps }) {
+type MyAppProps = {
+  Component: NextComponentType
+  pageProps: any
+}
+
+const MyApp: React.FunctionComponent<MyAppProps> = ({
+  Component,
+  pageProps,
+}) => {
   return (
     <Provider store={store}>
       <GlobalStyles />

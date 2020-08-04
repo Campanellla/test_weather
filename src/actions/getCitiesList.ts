@@ -2,6 +2,9 @@ import { SET_SEARCH_CITY } from './types'
 
 import store from 'src/store'
 
+import type { ThunkAction } from 'redux-thunk'
+import type { Action } from 'redux'
+
 export const setSearchCity = (
   city: string,
   isLoading = false,
@@ -13,7 +16,11 @@ export const setSearchCity = (
   results,
 })
 
-export const getCitiesList = (city = '') => {
+export const getCitiesList = (
+  city = ''
+):
+  | ThunkAction<void, ReduxState, unknown, Action<string>>
+  | { type: string } => {
   if (city === '' || store.getState().searchCity.results[city] != null) {
     return { type: 'drop' }
   }

@@ -32,7 +32,7 @@ const GridItemStyles = styled.div`
   }
 `
 
-type GridItemProps = { label: string; content: string; placeholder?: boolean }
+type GridItemProps = { label: string; content?: string; placeholder?: boolean }
 
 export const GridItem: React.FunctionComponent<GridItemProps> = ({
   label,

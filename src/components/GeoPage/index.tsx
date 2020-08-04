@@ -46,7 +46,15 @@ const GeoPageContainer = styled.div`
   }
 `
 
-const GeoPage = ({ weather, getLocationWeather }) => {
+type Props = {
+  weather: WeatherState
+  getLocationWeather: typeof getLocationWeather
+}
+
+const GeoPage: React.FunctionComponent<Props> = ({
+  weather,
+  getLocationWeather,
+}) => {
   const [prompt, setPrompt] = React.useState(false)
 
   React.useEffect(() => {
@@ -95,14 +103,14 @@ const GeoPage = ({ weather, getLocationWeather }) => {
 
   return (
     <GeoPageContainer>
-      <Weather weather={weather} />
+      <Weather weather={weather as WeatherResponse} />
       <WeatherForecast weather={weather} />
       <CityPageButton />
     </GeoPageContainer>
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: ReduxState) => {
   return { weather: state.weatherByLocation }
 }
 

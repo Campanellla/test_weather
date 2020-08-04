@@ -31,10 +31,12 @@ const DailyForecastItems = styled.div`
   padding: 0.5rem 1rem;
 `
 
-const WeatherForecast = ({ weather }) => (
+const WeatherForecast: React.FunctionComponent<{ weather: WeatherState }> = ({
+  weather,
+}) => (
   <Forecast>
     <HourlyForecaset>
-      {weather?.hourly?.map(({ temp, dt, weather }, i) => (
+      {weather?.hourly?.map(({ temp, dt, weather }, i: number) => (
         <div
           style={{
             padding: '0.5em',
@@ -58,7 +60,7 @@ const WeatherForecast = ({ weather }) => (
     </HourlyForecaset>
 
     <div>
-      {weather?.daily?.map(({ temp, dt, weather }, index) => {
+      {weather?.daily?.map(({ temp, dt, weather }, index: number) => {
         return (
           <DailyForecastItems>
             <div>{index === 0 ? 'today' : getDayOfWeek(dt)}</div>

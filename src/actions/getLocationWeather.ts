@@ -14,6 +14,9 @@ import {
   SET_LOCATION_WEATHER_ERROR,
 } from './types'
 
+import type { ThunkAction } from 'redux-thunk'
+import type { Action } from 'redux'
+
 export const setLocationWeather = (weather = {}) => ({
   type: SET_LOCATION_WEATHER,
   weather,
@@ -28,7 +31,9 @@ export const setLocationWeather_Error = (error: Error) => ({
   error,
 })
 
-export const getLocationWeather = () => {
+export const getLocationWeather = ():
+  | ThunkAction<void, ReduxState, unknown, Action<string>>
+  | { type: string } => {
   const currentState = store.getState().weatherByLocation
 
   const [validCurrentWeather, validForecast] = checkValidity(currentState)

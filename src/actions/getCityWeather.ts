@@ -1,5 +1,8 @@
 import store from 'src/store'
 
+import type { ThunkAction } from 'redux-thunk'
+import type { Action } from 'redux'
+
 import {
   checkLoading,
   checkValidity,
@@ -30,7 +33,11 @@ export const setCityWeather_Error = (city: string, error: Error) => ({
   error,
 })
 
-export const getCityWeather = (city = '') => {
+export const getCityWeather = (
+  city = ''
+):
+  | ThunkAction<void, ReduxState, unknown, Action<string>>
+  | { type: string } => {
   if (city === '') return { type: 'drop' }
   const currentState = store.getState().weatherByCity[city]
 
@@ -62,8 +69,8 @@ export const getCityWeather = (city = '') => {
       if (!validForecast) {
         try {
           const forecast = await getForecast(
-            weather.coord?.lat,
-            weather.coord?.lon
+            weather.coord?.lat!,
+            weather.coord?.lon!
           )
 
           if (!validateForecastResponse(forecast))

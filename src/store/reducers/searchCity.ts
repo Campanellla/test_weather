@@ -1,10 +1,5 @@
 import { SET_SEARCH_CITY } from 'src/actions/types'
 
-export type ListCities = {
-  results: { [key: string]: { title: string }[] }
-  isLoading: boolean
-}
-
 type ListCitiesAction = {
   type: string
   results: { title: string }[]

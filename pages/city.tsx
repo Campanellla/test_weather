@@ -3,7 +3,7 @@ import { NextPageContext } from 'next'
 
 import CityPage from 'src/components/CityPage'
 
-class City extends React.Component {
+class City extends React.Component<{ name: string }> {
   static async getInitialProps({ query: { name } }: NextPageContext) {
     return { name }
   }

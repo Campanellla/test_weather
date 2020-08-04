@@ -29,7 +29,9 @@ const Temperature = styled.div`
   justify-content: center;
 `
 
-const Weather = ({ weather }) => {
+const Weather: React.FunctionComponent<{ weather: WeatherResponse }> = ({
+  weather,
+}) => {
   const weatherDate = new Date(weather.dt * 1000).toString()
   const temperature = Math.round(weather.main.temp - 273.15)
   const location = weather.name

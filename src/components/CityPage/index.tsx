@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import Router from 'next/router'
 
 import { getCityWeather } from 'src/actions'
@@ -46,7 +46,17 @@ const ReturnButton = () => (
   </Button>
 )
 
-const CityPage = ({ name, getCityWeather, weatherByCity }) => {
+type Props = {
+  name: string
+  getCityWeather: typeof getCityWeather
+  weatherByCity: WeatherState
+}
+
+const CityPage: React.FunctionComponent<Props> = ({
+  name,
+  getCityWeather,
+  weatherByCity,
+}) => {
   React.useEffect(() => {
     getCityWeather(name)
   }, [])
@@ -70,8 +80,10 @@ const CityPage = ({ name, getCityWeather, weatherByCity }) => {
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: ReduxState) => {
   return { weatherByCity: state.weatherByCity }
 }
 
-export default connect(mapStateToProps, { getCityWeather })(CityPage)
+export default connect(mapStateToProps, {
+  getCityWeather,
+})(CityPage)
