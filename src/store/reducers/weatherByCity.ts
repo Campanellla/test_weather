@@ -1,44 +1,30 @@
 import {
   SET_CITY_WEATHER,
-  SET_LOCATION_WEATHER_ERROR,
   SET_CITY_WEATHER_LOADING,
+  SET_LOCATION_WEATHER_ERROR,
 } from 'src/actions/types'
 
-type Weather = {
-  loading?: boolean
-  error?: Error
-  requestTime?: number
-  [key: string]: any
-}
-
-type WeatherByCityState = {
-  [key: string]: Weather
-}
-
-type WeatherByCityAction = {
-  type: string
-  weather?: { [key: string]: any }
-  city?: string
-  error?: Error
-}
-
 const weatherByCity = (
-  state: WeatherByCityState = {},
-  action: WeatherByCityAction
-): WeatherByCityState => {
+  state: CitiesWeatherState = {},
+  action: WeatherAction
+): CitiesWeatherState => {
   const { city = '_' } = action
+  const currentState = state[city] || {}
 
   switch (action.type) {
     case SET_CITY_WEATHER:
-      state[city] = { ...action.weather, requestTime: new Date().getTime() }
+      state[city] = {
+        ...currentState,
+        ...action.weather,
+      }
       return { ...state }
 
     case SET_CITY_WEATHER_LOADING:
-      state[city] = { loading: true }
+      state[city] = { ...currentState, loading: true }
       return { ...state }
 
     case SET_LOCATION_WEATHER_ERROR:
-      state[city] = { error: action.error! }
+      state[city] = { ...currentState, error: action.error! }
       return { ...state }
 
     default:

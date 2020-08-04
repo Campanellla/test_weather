@@ -1,13 +1,12 @@
+import React from 'react'
 import styled from 'styled-components'
-
-import { Icon, Image } from 'semantic-ui-react'
+import { Image, Placeholder } from 'semantic-ui-react'
 
 import degToCompass from 'src/lib/degToCompass'
-
 import { GridListContainer, GridItem } from './GridList'
 
 const WeatherContainer = styled.div`
-  padding: 1rem 1rem;
+  grid-area: Weather;
 `
 
 const Location = styled.div`
@@ -30,16 +29,7 @@ const Temperature = styled.div`
   justify-content: center;
 `
 
-const Forecast = styled.div``
-
-const WeatherHeader = styled.div`
-  display: grid;
-  justify-content: center;
-`
-
 const Weather = ({ weather }) => {
-  console.log(weather)
-
   const weatherDate = new Date(weather.dt * 1000).toString()
   const temperature = Math.round(weather.main.temp - 273.15)
   const location = weather.name
@@ -83,13 +73,6 @@ const Weather = ({ weather }) => {
         <GridItem label={'Feels like'} content={`${feelsLike} ˚C`} />
         <GridItem label={'Wind'} content={`${windSpeed} km/h ${windCompass}`} />
       </GridListContainer>
-
-      <Forecast>
-        <div>Forecast:</div>
-        <div>Date 1</div>
-        <div>Date 2</div>
-        <div>Date 3</div>
-      </Forecast>
     </WeatherContainer>
   )
 }
@@ -101,5 +84,39 @@ type WeatherSkeletonProps = { name?: string }
 export const WeatherSkeleton: React.FunctionComponent<WeatherSkeletonProps> = ({
   name = '',
 }) => {
-  return <div>Loading {name}</div>
+  return (
+    <WeatherContainer>
+      <Location style={{ display: 'flex', justifyContent: 'center' }}>
+        {name ? (
+          name
+        ) : (
+          <Placeholder style={{ height: '1.25em', width: '100%' }} />
+        )}
+      </Location>
+      <WeatherCondition
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '1rem',
+        }}
+      >
+        <Placeholder style={{ height: '1.25em', width: '100%' }} />
+      </WeatherCondition>
+
+      <Temperature>
+        <Placeholder style={{ height: '1.25em', width: '100%' }} />
+      </Temperature>
+
+      <GridListContainer>
+        <GridItem label={'Sunrise'} placeholder />
+        <GridItem label={'Sunset'} placeholder />
+
+        <GridItem label={'Pressure'} placeholder />
+        <GridItem label={'Humidity'} placeholder />
+
+        <GridItem label={'Feels like'} placeholder />
+        <GridItem label={'Wind'} placeholder />
+      </GridListContainer>
+    </WeatherContainer>
+  )
 }

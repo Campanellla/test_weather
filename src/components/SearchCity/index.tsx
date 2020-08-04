@@ -1,16 +1,20 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import styled from 'styled-components'
+import { Search, SearchProps, Button } from 'semantic-ui-react'
 import _ from 'lodash'
 
+import type { ListCities } from 'src/store/reducers/searchCity'
 import { getCitiesList } from 'src/actions/getCitiesList'
 
-import { Search, SearchProps } from 'semantic-ui-react'
-import { connect } from 'react-redux'
-
-import styled from 'styled-components'
-
-import type { ListCities } from 'src/store/reducers/searchCity'
-
-const popularCities = ['London', 'Odesa', 'Kyiv']
+const popularCities = [
+  'London',
+  'Odesa',
+  'Kyiv',
+  'New York',
+  'Moscow',
+  'Amsterdam',
+]
 
 const StyledSearch = styled(Search)`
   display: grid;
@@ -68,17 +72,17 @@ class SearchCity extends Component<Props, State> {
   }
 
   _handleSC = _.debounce(this._get, 500, {
-    leading: true,
+    trailing: true,
   })
 
   render() {
     const { value } = this.state
 
     return (
-      <>
+      <SearchContainer>
         <StyledSearch
           fluid
-          showNoResults={!this.props.isLoading}
+          showNoResults={false}
           selectFirstResult
           loading={this.props.isLoading}
           onResultSelect={this.handleResultSelect}
@@ -86,18 +90,39 @@ class SearchCity extends Component<Props, State> {
           results={this.props.results[value]}
           value={value}
         />
-        <div>
-          <div>Popular:</div>
+        <CityList>
           {popularCities.map((city, key) => (
-            <div key={key} onClick={() => this.props.onSelect?.(city)}>
+            <Button
+              key={key}
+              onClick={() => this.props.onSelect?.(city)}
+              inverted
+              color="blue"
+            >
               {city}
-            </div>
+            </Button>
           ))}
-        </div>
-      </>
+        </CityList>
+      </SearchContainer>
     )
   }
 }
+
+const CityList = styled.div`
+  display: grid;
+  grid-auto-rows: auto;
+  gap: 0.25rem;
+
+  &&&&& > button {
+    font-size: 1.5rem;
+    margin: 0;
+    box-shadow: none !important;
+    color: black;
+  }
+`
+
+const SearchContainer = styled.div`
+  grid-area: Search;
+`
 
 const mapStateToProps = (state: { searchCity: ListCities }) => {
   return {

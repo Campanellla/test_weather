@@ -27,7 +27,7 @@
     "routes.js",
     "server.js"
   ],
-  "include": ["./pages/*"],
+  "include": ["./pages/*", "./src/lib/types.d.ts"],
   "plugins": [
     {
       "name": "typescript-styled-plugin"

@@ -1,10 +1,18 @@
+import store from 'src/store'
+
+import getPosition from 'src/lib/getPosition'
+import {
+  checkLoading,
+  checkValidity,
+  getForecast,
+  validateResponse,
+  validateForecastResponse,
+} from './helpers'
 import {
   SET_LOCATION_WEATHER,
   SET_LOCATION_WEATHER_LOADING,
   SET_LOCATION_WEATHER_ERROR,
 } from './types'
-
-import store from 'src/store'
 
 export const setLocationWeather = (weather = {}) => ({
   type: SET_LOCATION_WEATHER,
@@ -21,29 +29,63 @@ export const setLocationWeather_Error = (error: Error) => ({
 })
 
 export const getLocationWeather = () => {
-  const lastRequestTime = store.getState().weatherByLocation.requestTime
-  if (
-    lastRequestTime != null &&
-    new Date().getTime() - lastRequestTime < 600000
-  ) {
-    return { type: 'drop' }
-  }
+  const currentState = store.getState().weatherByLocation
+
+  const [validCurrentWeather, validForecast] = checkValidity(currentState)
+
+  if (validCurrentWeather || checkLoading(currentState)) return { type: 'drop' }
 
   return async function (dispatch) {
     dispatch(setLocationWeather_Loading())
 
     try {
-      const { coords } = await new Promise((resolve) =>
-        navigator?.geolocation.getCurrentPosition(resolve)
-      )
+      const coords = await getPosition()
 
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=${process.env.NEXT_PUBLIC_WEATHER_API}`
       )
 
-      const weather = await response.json()
+      const weather: WeatherState = await response.json()
+
+      if (!validateResponse(weather as WeatherResponse))
+        throw new Error('Server responded with incorrect response.')
+
+      weather.loading = false
+      weather.error = null
+      weather.requestTime = new Date().getTime()
+
+      if (!validForecast) weather.loadingForecast = true
 
       dispatch(setLocationWeather(weather))
+
+      if (!validForecast) {
+        try {
+          const forecast = await getForecast(coords.latitude, coords.longitude)
+
+          if (!validateForecastResponse(forecast))
+            throw new Error(
+              'Server responded forecast with incorrect response.'
+            )
+
+          dispatch(
+            setLocationWeather({
+              ...weather,
+              ...forecast,
+              loadingForecast: false,
+              forecastError: null,
+              forecastRequestTime: new Date().getTime(),
+            })
+          )
+        } catch (forecastError) {
+          dispatch(
+            setLocationWeather({
+              loadingForecast: false,
+              forecastError,
+              forecastRequestTime: 0,
+            })
+          )
+        }
+      }
     } catch (error) {
       dispatch(setLocationWeather_Error(error))
     }

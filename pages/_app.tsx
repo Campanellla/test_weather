@@ -10,6 +10,11 @@ const GlobalStyles = createGlobalStyle`
   body{
     font-size: 20px;
     line-height: normal;
+    background-color: lightblue;
+  }
+  
+  #__next{
+    display: grid;
   }
 `
 

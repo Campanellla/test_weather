@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Placeholder } from 'semantic-ui-react'
 
 export const GridListContainer = styled.div`
   display: grid;
@@ -31,14 +32,19 @@ const GridItemStyles = styled.div`
   }
 `
 
-type GridItemProps = { label: string; content: string }
+type GridItemProps = { label: string; content: string; placeholder?: boolean }
 
 export const GridItem: React.FunctionComponent<GridItemProps> = ({
   label,
   content,
+  placeholder,
 }) => (
   <GridItemStyles>
     <div>{label}</div>
-    <div>{content}</div>
+    {!placeholder ? (
+      <div>{content}</div>
+    ) : (
+      <Placeholder style={{ height: '1.5em', width: '100%' }} />
+    )}
   </GridItemStyles>
 )
