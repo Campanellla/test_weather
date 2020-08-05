@@ -1,3 +1,5 @@
+// UNUSED
+
 import { SET_GEO } from 'src/actions/types'
 
 const searchCity = (

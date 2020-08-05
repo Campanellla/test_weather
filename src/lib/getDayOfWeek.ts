@@ -1,11 +1,11 @@
 const days = [
-  'sunday',
-  'monday',
-  'tuesday',
-  'wednessday',
-  'thursday',
-  'friday',
-  'saturday',
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednessday',
+  'Thursday',
+  'Friday',
+  'Saturday',
 ]
 
 export default (dt: number) => {

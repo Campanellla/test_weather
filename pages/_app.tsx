@@ -2,10 +2,11 @@ import 'semantic-ui-css/semantic.min.css'
 import React from 'react'
 import { Provider } from 'react-redux'
 import { createGlobalStyle } from 'styled-components'
+import Head from 'next/head'
 
 import store from 'src/store'
 
-import { NextComponentType } from 'next'
+import type { NextComponentType } from 'next'
 
 const GlobalStyles = createGlobalStyle`
   body{
@@ -30,6 +31,9 @@ const MyApp: React.FunctionComponent<MyAppProps> = ({
 }) => {
   return (
     <Provider store={store}>
+      <Head>
+        <title>Weather</title>
+      </Head>
       <GlobalStyles />
       <Component {...pageProps} />
     </Provider>

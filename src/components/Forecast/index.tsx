@@ -26,7 +26,7 @@ const HourlyForecaset = styled.div`
 
 const DailyForecastItems = styled.div`
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto 1fr auto;
   background: rgba(255, 255, 255, 0.25);
   padding: 0.5rem 1rem;
 `
@@ -47,7 +47,10 @@ const WeatherForecast: React.FunctionComponent<{ weather: WeatherState }> = ({
           key={i}
         >
           <div style={{ textAlign: 'center' }}>
-            {new Date(dt * 1000).getHours()}
+            {new Date(dt * 1000).toLocaleTimeString(undefined, {
+              hour12: true,
+              hour: 'numeric',
+            })}
           </div>
           <Image
             style={{ height: '2rem', alignSelf: 'center' }}
@@ -60,19 +63,21 @@ const WeatherForecast: React.FunctionComponent<{ weather: WeatherState }> = ({
     </HourlyForecaset>
 
     <div>
-      {weather?.daily?.map(({ temp, dt, weather }, index: number) => {
-        return (
-          <DailyForecastItems>
-            <div>{index === 0 ? 'today' : getDayOfWeek(dt)}</div>
-            <Image
-              style={{ height: '2rem' }}
-              src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`}
-              inline
-            />
-            <div>{Math.round(temp.day - 273.15)} ˚C</div>
-          </DailyForecastItems>
-        )
-      })}
+      {weather?.daily?.map(({ temp, dt, weather }, index: number) => (
+        <DailyForecastItems key={index}>
+          <div>{index === 0 ? 'Today' : getDayOfWeek(dt)}</div>
+          <Image
+            style={{ height: '2rem' }}
+            src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`}
+            inline
+          />
+          <div>{Math.round(temp.day - 273.15)} ˚C</div>
+          <div>
+            {Math.round(temp.min - 273.15)} ˚C / {Math.round(temp.max - 273.15)}{' '}
+            ˚C
+          </div>
+        </DailyForecastItems>
+      ))}
     </div>
   </Forecast>
 )
@@ -98,6 +103,7 @@ export const WeatherForecastSkeleton = () => {
           return (
             <DailyForecastItems
               style={{ display: 'flex', justifyContent: 'center' }}
+              key={index}
             >
               <Placeholder style={{ height: '1.5em', width: '100%' }} />
             </DailyForecastItems>

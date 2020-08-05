@@ -6,7 +6,10 @@ import reducers from './reducers'
 
 const loggerMiddleware = createLogger()
 
-export default createStore(
-  reducers,
-  applyMiddleware(thunkMiddleware, loggerMiddleware)
-)
+const middlewares: any[] = [thunkMiddleware]
+
+if (process.env.development) {
+  middlewares.push(loggerMiddleware)
+}
+
+export default createStore(reducers, applyMiddleware(...middlewares))
