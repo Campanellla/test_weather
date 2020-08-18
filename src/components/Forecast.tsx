@@ -4,7 +4,7 @@ import { Image, Placeholder } from 'semantic-ui-react'
 import styled from 'styled-components'
 import getDayOfWeek from 'src/lib/getDayOfWeek'
 
-import { getForecast } from 'src/graphql/getForecast'
+import { getForecast } from 'src/graphql'
 import { useQuery } from '@apollo/client'
 
 const Forecast = styled.div`

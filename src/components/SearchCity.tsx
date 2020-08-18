@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Search, SearchProps, Button } from 'semantic-ui-react'
 import { useQuery } from '@apollo/client'
 
-import { getCitiesList } from 'src/graphql/getCitiesList'
+import { getCitiesList } from 'src/graphql'
 
 type CityName = { title: string }
 

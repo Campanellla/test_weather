@@ -32,7 +32,7 @@ const Temperature = styled.div`
 const Weather: React.FunctionComponent<{ weather: WeatherResponse }> = ({
   weather,
 }) => {
-  const weatherDate = new Date(weather.dt * 1000).toString()
+  // const weatherDate = new Date(weather.dt * 1000).toString()
   const temperature = Math.round(weather.main.temp - 273.15)
   const location = weather.name
   const feelsLike = Math.round(weather.main.feels_like - 273.15)

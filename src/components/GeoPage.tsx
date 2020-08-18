@@ -2,7 +2,7 @@ import React from 'react'
 import Router from 'next/router'
 import { Button } from 'semantic-ui-react'
 import styled from 'styled-components'
-import { useLazyQuery, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 
 import Weather, { WeatherSkeleton } from 'src/components/Weather'
 import SearchCity from 'src/components/SearchCity'
@@ -10,10 +10,9 @@ import WeatherForecast, {
   WeatherForecastSkeleton,
 } from 'src/components/Forecast'
 import ErrorContainer from 'src/components/ErrorContainer'
+import getPosition from 'src/lib/getPosition'
 
 import { getWeatherByLocation } from 'src/graphql'
-import getPosition from 'src/lib/getPosition'
-import { truncate } from 'lodash'
 
 const AskLocationButton = styled(Button)`
   grid-area: Geo;
