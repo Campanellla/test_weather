@@ -1,16 +1,14 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
 import Router from 'next/router'
-
-import { getCityWeather } from 'src/actions'
-import { connect } from 'react-redux'
+import { useQuery } from '@apollo/client'
+import styled from 'styled-components'
+import { Button } from 'semantic-ui-react'
 
 import Weather, { WeatherSkeleton } from 'src/components/Weather'
 import WeatherForecast from 'src/components/Forecast'
-
-import { Button } from 'semantic-ui-react'
-import styled from 'styled-components'
-
 import ErrorContainer from 'src/components/ErrorContainer'
+
+import { getWeatherByCity } from 'src/graphql'
 
 const StyledCityPage = styled.div`
   display: grid;
@@ -48,42 +46,34 @@ const ReturnButton = () => (
 
 type Props = {
   name: string
-  getCityWeather: typeof getCityWeather
-  weatherByCity: WeatherState
 }
 
-const CityPage: React.FunctionComponent<Props> = ({
-  name,
-  getCityWeather,
-  weatherByCity,
-}) => {
-  React.useEffect(() => {
-    getCityWeather(name)
-  }, [])
+const CityPage: React.FC<Props> = ({ name }) => {
+  const { loading, data, error } = useQuery(getWeatherByCity, {
+    variables: { q: name },
+  })
 
-  const weather = weatherByCity[name]
-
-  if (weather?.error) {
-    return <ErrorContainer message={weather.error.message} />
+  if (loading) {
+    return <WeatherSkeleton name={name} />
   }
 
-  if (!weather || weather?.loading || weather.loading === undefined) {
-    return <WeatherSkeleton name={name} />
+  if (error) {
+    return <ErrorContainer message={error.message} />
+  }
+
+  const weather = data.getWeatherByCity
+
+  if (!weather) {
+    return <ErrorContainer message={'data not received'} />
   }
 
   return (
     <StyledCityPage>
       <Weather weather={weather} />
-      <WeatherForecast weather={weather} />
+      <WeatherForecast coord={weather.coord} />
       <ReturnButton />
     </StyledCityPage>
   )
 }
 
-const mapStateToProps = (state: ReduxState) => {
-  return { weatherByCity: state.weatherByCity }
-}
-
-export default connect(mapStateToProps, {
-  getCityWeather,
-})(CityPage)
+export default CityPage

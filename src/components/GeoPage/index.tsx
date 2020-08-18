@@ -1,16 +1,19 @@
 import React from 'react'
 import Router from 'next/router'
-import { connect } from 'react-redux'
 import { Button } from 'semantic-ui-react'
 import styled from 'styled-components'
+import { useLazyQuery, useQuery } from '@apollo/client'
 
-import { getLocationWeather } from 'src/actions'
 import Weather, { WeatherSkeleton } from 'src/components/Weather'
 import SearchCity from 'src/components/SearchCity'
 import WeatherForecast, {
   WeatherForecastSkeleton,
 } from 'src/components/Forecast'
 import ErrorContainer from 'src/components/ErrorContainer'
+
+import { getWeatherByLocation } from 'src/graphql'
+import getPosition from 'src/lib/getPosition'
+import { truncate } from 'lodash'
 
 const AskLocationButton = styled(Button)`
   grid-area: Geo;
@@ -46,16 +49,29 @@ const GeoPageContainer = styled.div`
   }
 `
 
-type Props = {
-  weather: WeatherState
-  getLocationWeather: typeof getLocationWeather
-}
+let storedCoords: {
+  lat: number
+  lon: number
+} | null = null
 
-const GeoPage: React.FunctionComponent<Props> = ({
-  weather,
-  getLocationWeather,
-}) => {
+const GeoPage: React.FC = () => {
   const [prompt, setPrompt] = React.useState(false)
+  const [coords, setCoords] = React.useState<{
+    lat: number
+    lon: number
+  } | null>(storedCoords)
+
+  const { loading, data, error } = useQuery(getWeatherByLocation, {
+    skip: !coords,
+    variables: coords,
+  })
+
+  const runRequest = async () => {
+    const coords = await getPosition()
+
+    storedCoords = { lat: coords.latitude, lon: coords.longitude }
+    setCoords(storedCoords)
+  }
 
   React.useEffect(() => {
     try {
@@ -63,7 +79,7 @@ const GeoPage: React.FunctionComponent<Props> = ({
         .query({ name: 'geolocation' })
         .then(function (result) {
           if (result.state == 'granted') {
-            getLocationWeather()
+            runRequest()
           } else if (result.state == 'prompt') {
             setPrompt(true)
           } else {
@@ -71,23 +87,25 @@ const GeoPage: React.FunctionComponent<Props> = ({
           }
         })
     } catch (e) {
-      getLocationWeather()
+      runRequest()
       setPrompt(true)
     }
   }, [])
 
-  if (weather?.error) {
-    return <ErrorContainer message={weather.error.message} />
+  if (error) {
+    return <ErrorContainer message={error.message} />
   }
 
-  if (!weather || weather.loading === true || weather.loading === undefined) {
+  const weather = data?.getWeatherByLocation
+
+  if (!weather || loading) {
     return (
       <GeoPageContainer>
         {prompt ? (
           <AskLocationButton
             onClick={() => {
               setPrompt(false)
-              getLocationWeather()
+              runRequest()
             }}
           >
             Accept location permission
@@ -104,14 +122,10 @@ const GeoPage: React.FunctionComponent<Props> = ({
   return (
     <GeoPageContainer>
       <Weather weather={weather as WeatherResponse} />
-      <WeatherForecast weather={weather} />
+      <WeatherForecast coord={weather.coord} />
       <CityPageButton />
     </GeoPageContainer>
   )
 }
 
-const mapStateToProps = (state: ReduxState) => {
-  return { weather: state.weatherByLocation }
-}
-
-export default connect(mapStateToProps, { getLocationWeather })(GeoPage)
+export default GeoPage

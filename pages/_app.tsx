@@ -1,12 +1,23 @@
 import 'semantic-ui-css/semantic.min.css'
 import React from 'react'
-import { Provider } from 'react-redux'
 import { createGlobalStyle } from 'styled-components'
 import Head from 'next/head'
-
-import store from 'src/store'
+import { RestLink } from 'apollo-link-rest'
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 
 import type { NextComponentType } from 'next'
+
+// Set `RestLink` with your endpoint
+const restLink = new RestLink({
+  uri: 'https://api.openweathermap.org/',
+  endpoints: { local: '/api' },
+})
+
+// Setup your client
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: restLink,
+})
 
 const GlobalStyles = createGlobalStyle`
   body{
@@ -30,13 +41,13 @@ const MyApp: React.FunctionComponent<MyAppProps> = ({
   pageProps,
 }) => {
   return (
-    <Provider store={store}>
+    <ApolloProvider client={client}>
       <Head>
         <title>Weather</title>
       </Head>
       <GlobalStyles />
       <Component {...pageProps} />
-    </Provider>
+    </ApolloProvider>
   )
 }
 

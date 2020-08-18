@@ -10,6 +10,10 @@ export default (req, res) => {
       res.statusCode = 200
       res.setHeader('Content-Type', 'application/json')
       res.end(JSON.stringify(cities))
+    } else {
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({}))
     }
     return
   } catch (e) {

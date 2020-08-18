@@ -4,6 +4,9 @@ import { Image, Placeholder } from 'semantic-ui-react'
 import styled from 'styled-components'
 import getDayOfWeek from 'src/lib/getDayOfWeek'
 
+import { getForecast } from 'src/graphql/getForecast'
+import { useQuery } from '@apollo/client'
+
 const Forecast = styled.div`
   display: grid;
   grid-template-rows: auto 1fr;
@@ -31,56 +34,103 @@ const DailyForecastItems = styled.div`
   padding: 0.5rem 1rem;
 `
 
-const WeatherForecast: React.FunctionComponent<{ weather: WeatherState }> = ({
-  weather,
-}) => (
-  <Forecast>
-    <HourlyForecaset>
-      {weather?.hourly?.map(({ temp, dt, weather }, i: number) => (
-        <div
-          style={{
-            padding: '0.5em',
-            whiteSpace: 'nowrap',
-            display: 'grid',
-            justifyItems: 'center',
-          }}
-          key={i}
-        >
-          <div style={{ textAlign: 'center' }}>
-            {new Date(dt * 1000).toLocaleTimeString(undefined, {
-              hour12: true,
-              hour: 'numeric',
-            })}
-          </div>
-          <Image
-            style={{ height: '2rem', alignSelf: 'center' }}
-            src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`}
-            inline
-          />
-          <div>{Math.round(temp - 273.15)} ˚C</div>
-        </div>
-      ))}
-    </HourlyForecaset>
+type Props = {
+  coord: { lat: number; lon: number }
+}
 
-    <div>
-      {weather?.daily?.map(({ temp, dt, weather }, index: number) => (
-        <DailyForecastItems key={index}>
-          <div>{index === 0 ? 'Today' : getDayOfWeek(dt)}</div>
-          <Image
-            style={{ height: '2rem' }}
-            src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`}
-            inline
-          />
-          <div>{Math.round(temp.day - 273.15)} ˚C</div>
-          <div>
-            {Math.round(temp.min - 273.15)} ˚C / {Math.round(temp.max - 273.15)}{' '}
-            ˚C
-          </div>
-        </DailyForecastItems>
-      ))}
-    </div>
-  </Forecast>
-)
+type ForecastItem = {
+  temp: number
+  dt: number
+  weather: [
+    {
+      id: number
+      main: string
+      description: string
+      icon: string
+    }
+  ]
+}
+
+type ForecastItem2 = {
+  temp: {
+    day: number
+    min: number
+    max: number
+    night: number
+    eve: number
+    morn: number
+  }
+  dt: number
+  weather: [
+    {
+      id: number
+      main: string
+      description: string
+      icon: string
+    }
+  ]
+}
+
+const WeatherForecast: React.FC<Props> = ({ coord }) => {
+  if (!coord) return null
+
+  const { loading, data, error } = useQuery(getForecast, { variables: coord })
+
+  const weather = data?.getForecast
+
+  return (
+    <Forecast>
+      <HourlyForecaset>
+        {weather?.hourly?.map(
+          ({ temp, dt, weather }: ForecastItem, i: number) => (
+            <div
+              style={{
+                padding: '0.5em',
+                whiteSpace: 'nowrap',
+                display: 'grid',
+                justifyItems: 'center',
+              }}
+              key={i}
+            >
+              <div style={{ textAlign: 'center' }}>
+                {new Date(dt * 1000).toLocaleTimeString(undefined, {
+                  hour12: true,
+                  hour: 'numeric',
+                })}
+              </div>
+              <Image
+                style={{ height: '2rem', alignSelf: 'center' }}
+                src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`}
+                inline
+              />
+              <div>{Math.round(temp - 273.15)} ˚C</div>
+            </div>
+          )
+        )}
+      </HourlyForecaset>
+
+      <div>
+        {weather?.daily?.map(
+          ({ temp, dt, weather }: ForecastItem2, index: number) => (
+            <DailyForecastItems key={index}>
+              <div>{index === 0 ? 'Today' : getDayOfWeek(dt)}</div>
+              <Image
+                style={{ height: '2rem' }}
+                src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`}
+                inline
+              />
+              <div>{Math.round(temp.day - 273.15)} ˚C</div>
+              <div>
+                {Math.round(temp.min - 273.15)} ˚C /{' '}
+                {Math.round(temp.max - 273.15)} ˚C
+              </div>
+            </DailyForecastItems>
+          )
+        )}
+      </div>
+    </Forecast>
+  )
+}
 
 export default WeatherForecast
 
