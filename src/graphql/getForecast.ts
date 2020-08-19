@@ -4,7 +4,7 @@ export const getForecast = gql`
   query getForecast($lat: Latitude!, $lon: Longitude!) {
     getForecast(lat: $lat, lon: $lon)
       @rest(type: "Forecast", path: "data/2.5/onecall?{args}&exclude=current,minutely&appid=${process.env.NEXT_PUBLIC_WEATHER_API}") {
-      id
+
       
       hourly @type(name: "Hourly"){
         dt

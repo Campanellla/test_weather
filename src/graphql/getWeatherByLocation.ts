@@ -4,7 +4,6 @@ export const getWeatherByLocation = gql`
   query getWeatherByLocation($lat: Latitude!, $lon:Longitude!) {
     getWeatherByLocation(lat: $lat, lon: $lon)
       @rest(type: "Weather", path: "data/2.5/weather?{args}&appid=${process.env.NEXT_PUBLIC_WEATHER_API}") {
-      id
       name
       visibility
       base
